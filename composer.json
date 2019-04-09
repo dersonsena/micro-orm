@@ -1,0 +1,22 @@
+{
+    "name": "kildersonsena/micro-orm",
+    "description": "A simple and easy ORM using PHP PDO",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Kilderson Sena",
+            "email": "dersonsena@gmail.com"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "Dersonsena\\ORM\\": "src"
+        }
+    },
+    "require": {},
+    "require-dev": {
+        "phpunit/phpunit": "^7.1",
+        "squizlabs/php_codesniffer": "^3.4"
+    }
+}
