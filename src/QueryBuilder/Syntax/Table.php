@@ -1,6 +1,6 @@
 <?php
 
-namespace Dersonsena\ORM\Drivers\Manipulation;
+namespace Dersonsena\ORM\QueryBuilder\Syntax;
 
 class Table
 {
@@ -37,7 +37,7 @@ class Table
 
     public function getTableNameWithAlias()
     {
-        $alias = (!empty($this->tableAlias) && !is_null($this->tableAlias) ? " AS {$this->tableAlias}" : '');
-        return $this->table . $alias;
+        $alias = (!empty($this->alias) && !is_null($this->alias) ? " AS {$this->alias}" : '');
+        return $this->name . $alias;
     }
 }

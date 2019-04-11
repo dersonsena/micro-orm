@@ -1,10 +1,11 @@
 <?php
 
-namespace Dersonsena\ORM\Drivers\Generic;
+namespace Dersonsena\ORM\QueryBuilder\Generic;
 
-use Dersonsena\ORM\Drivers\BuilderInterface;
-use Dersonsena\ORM\Drivers\Manipulation\ManipulationFactory;
-use Dersonsena\ORM\Drivers\Manipulation\Table;
+use Dersonsena\ORM\QueryBuilder\BuilderInterface;
+use Dersonsena\ORM\QueryBuilder\Manipulation\ManipulationFactory;
+use Dersonsena\ORM\QueryBuilder\Manipulation\Table;
+use Dersonsena\ORM\QueryBuilder\Syntax\SyntaxFactory;
 
 class GenericBuilder implements BuilderInterface
 {
@@ -20,7 +21,7 @@ class GenericBuilder implements BuilderInterface
 
     public function table(string $name, string $alias = '')
     {
-        $this->table = ManipulationFactory::createTable($name, $alias);
+        $this->table = SyntaxFactory::createTable($name, $alias);
         return $this;
     }
 

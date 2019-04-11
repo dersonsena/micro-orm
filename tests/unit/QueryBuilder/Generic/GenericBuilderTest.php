@@ -1,6 +1,6 @@
 <?php
 
-use Dersonsena\ORM\Drivers\Generic\GenericBuilder;
+use Dersonsena\ORM\QueryBuilder\Generic\GenericBuilder;
 
 class GenericBuilderTest extends \PHPUnit\Framework\TestCase
 {

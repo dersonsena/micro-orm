@@ -1,6 +1,6 @@
 <?php
 
-namespace Dersonsena\ORM\Drivers;
+namespace Dersonsena\ORM\QueryBuilder;
 
 interface BuilderInterface
 {
