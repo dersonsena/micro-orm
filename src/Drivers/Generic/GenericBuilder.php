@@ -3,18 +3,15 @@
 namespace Dersonsena\ORM\Drivers\Generic;
 
 use Dersonsena\ORM\Drivers\BuilderInterface;
+use Dersonsena\ORM\Drivers\Manipulation\ManipulationFactory;
+use Dersonsena\ORM\Drivers\Manipulation\Table;
 
 class GenericBuilder implements BuilderInterface
 {
     /**
-     * @var string
+     * @var Table
      */
     private $table;
-
-    /**
-     * @var string
-     */
-    private $tableAlias;
 
     /**
      * @var string
@@ -23,8 +20,7 @@ class GenericBuilder implements BuilderInterface
 
     public function table(string $name, string $alias = '')
     {
-        $this->table = $name;
-        $this->tableAlias = $alias;
+        $this->table = ManipulationFactory::createTable($name, $alias);
         return $this;
     }
 
@@ -42,7 +38,7 @@ class GenericBuilder implements BuilderInterface
             $stringColumns = substr_replace($stringColumns, '', -2);
         }
         
-        $this->rawSql = sprintf('SELECT %s FROM %s', $stringColumns, $this->getTableName());
+        $this->rawSql = sprintf('SELECT %s FROM %s', $stringColumns, $this->table->getTableNameWithAlias());
 
         return $this;
     }
@@ -59,7 +55,7 @@ class GenericBuilder implements BuilderInterface
 
             $newValue = (is_numeric($value) ? $value : "'{$value}'");
             
-            $alias = (!empty($this->tableAlias) ? $this->tableAlias : $this->table);
+            $alias = (!empty($this->table->tableAlias) ? $this->table->tableAlias : $this->table->getName());
             $sql .= "{$alias}.{$field} = {$newValue}";
             $i++;
         }
@@ -103,11 +99,5 @@ class GenericBuilder implements BuilderInterface
     public function getSql()
     {
         return $this->rawSql;
-    }
-
-    protected function getTableName()
-    {
-        $alias = (!empty($this->tableAlias) && !is_null($this->tableAlias) ? " AS {$this->tableAlias}" : '');
-        return $this->table . $alias;
     }
 }
