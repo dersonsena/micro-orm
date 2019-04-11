@@ -132,6 +132,7 @@ class GenericBuilderTest extends \PHPUnit\Framework\TestCase
         $genericBuilder = new GenericBuilder;
 
         $this->expectException(QueryBuilderException::class);
+        $this->expectExceptionMessage('The direction "ASCCCCC" is invalid.');
 
         $sql = $genericBuilder->table('users')
             ->select(['name', 'email', 'password'])
