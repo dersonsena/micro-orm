@@ -8,4 +8,9 @@ final class SyntaxFactory
     {
         return new Table($name, $alias);
     }
+
+    public static function createOrderBy($order): OrderBy
+    {
+        return new OrderBy($order);
+    }
 }

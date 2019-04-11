@@ -4,8 +4,9 @@ namespace Dersonsena\ORM\QueryBuilder\Generic;
 
 use Dersonsena\ORM\QueryBuilder\BuilderInterface;
 use Dersonsena\ORM\QueryBuilder\Manipulation\ManipulationFactory;
-use Dersonsena\ORM\QueryBuilder\Manipulation\Table;
+use Dersonsena\ORM\QueryBuilder\Syntax\Table;
 use Dersonsena\ORM\QueryBuilder\Syntax\SyntaxFactory;
+use Dersonsena\ORM\QueryBuilder\Syntax\OrderBy;
 
 class GenericBuilder implements BuilderInterface
 {
@@ -14,6 +15,16 @@ class GenericBuilder implements BuilderInterface
      */
     private $table;
 
+    /**
+     * @var Select
+     */
+    private $select;
+
+    /**
+     * @var OrderBy
+     */
+    private $order;
+    
     /**
      * @var string
      */
@@ -27,19 +38,8 @@ class GenericBuilder implements BuilderInterface
 
     public function select(array $columns = [])
     {
-        $stringColumns = '*';
-
-        if (!empty($columns)) {
-            $stringColumns = '';
-
-            foreach ($columns as $alias => $column) {
-                $stringColumns .= (!is_numeric($alias) ? "{$column} AS {$alias}" : $column) . ', ';
-            }
-
-            $stringColumns = substr_replace($stringColumns, '', -2);
-        }
-        
-        $this->rawSql = sprintf('SELECT %s FROM %s', $stringColumns, $this->table->getTableNameWithAlias());
+        $this->select = ManipulationFactory::createSelect($this->table, $columns);
+        $this->rawSql = $this->select->getSql();
 
         return $this;
     }
@@ -66,21 +66,10 @@ class GenericBuilder implements BuilderInterface
         return $this;
     }
 
-    public function orderBy(array $order)
+    public function orderBy($order)
     {
-        $sql = ' ORDER BY ';
-        $i = 0;
-
-        foreach ($order as $field => $direction) {
-            if ($i > 0) {
-                $sql .= ", ";
-            }
-
-            $sql .= "{$field} {$direction}";
-            $i++;
-        }
-
-        $this->rawSql .= $sql;
+        $this->order = SyntaxFactory::createOrderBy($order);
+        $this->rawSql .= $this->order->getSql();
 
         return $this;
     }

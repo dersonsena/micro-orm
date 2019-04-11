@@ -1,6 +1,7 @@
 <?php
 
 use Dersonsena\ORM\QueryBuilder\Generic\GenericBuilder;
+use Dersonsena\ORM\QueryBuilder\QueryBuilderException;
 
 class GenericBuilderTest extends \PHPUnit\Framework\TestCase
 {
@@ -90,6 +91,18 @@ class GenericBuilderTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals("SELECT id FROM users WHERE users.id = 20", $sql);
     }
 
+    public function testSelectWithAStringOrderBy()
+    {
+        $genericBuilder = new GenericBuilder;
+
+        $sql = $genericBuilder->table('users')
+            ->select()
+            ->orderBy('name ASC, email ASC')
+            ->getSql();
+
+        $this->assertEquals("SELECT * FROM users ORDER BY name ASC, email ASC", $sql);
+    }
+
     public function testSelectWithASingleOrderBy()
     {
         $genericBuilder = new GenericBuilder;
@@ -112,6 +125,18 @@ class GenericBuilderTest extends \PHPUnit\Framework\TestCase
             ->getSql();
 
         $this->assertEquals("SELECT name, email, password FROM users ORDER BY name ASC, email DESC, id ASC", $sql);
+    }
+
+    public function testSelectWithAInvalidDirection()
+    {
+        $genericBuilder = new GenericBuilder;
+
+        $this->expectException(QueryBuilderException::class);
+
+        $sql = $genericBuilder->table('users')
+            ->select(['name', 'email', 'password'])
+            ->orderBy(['name' => 'ASCCCCC'])
+            ->getSql();
     }
 
     public function testSelectWithALimit()
