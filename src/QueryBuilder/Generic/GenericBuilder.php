@@ -3,7 +3,11 @@
 namespace Dersonsena\ORM\QueryBuilder\Generic;
 
 use Dersonsena\ORM\QueryBuilder\BuilderInterface;
+use Dersonsena\ORM\QueryBuilder\Manipulation\Join;
 use Dersonsena\ORM\QueryBuilder\Manipulation\ManipulationFactory;
+use Dersonsena\ORM\QueryBuilder\Manipulation\Select;
+use Dersonsena\ORM\QueryBuilder\Syntax\Limit;
+use Dersonsena\ORM\QueryBuilder\Syntax\Offset;
 use Dersonsena\ORM\QueryBuilder\Syntax\Table;
 use Dersonsena\ORM\QueryBuilder\Syntax\SyntaxFactory;
 use Dersonsena\ORM\QueryBuilder\Syntax\OrderBy;
@@ -21,9 +25,24 @@ class GenericBuilder implements BuilderInterface
     private $select;
 
     /**
+     * @var Join
+     */
+    private $join;
+
+    /**
      * @var OrderBy
      */
     private $order;
+
+    /**
+     * @var Limit
+     */
+    private $limit;
+
+    /**
+     * @var Offset
+     */
+    private $offset;
     
     /**
      * @var string
@@ -39,7 +58,14 @@ class GenericBuilder implements BuilderInterface
     public function select(array $columns = [])
     {
         $this->select = ManipulationFactory::createSelect($this->table, $columns);
-        $this->rawSql = $this->select->getSql();
+        return $this;
+    }
+
+    public function innerJoin(string $table, string $selfColumn, string $refColumn, array $columns = [])
+    {
+        $this->join = SyntaxFactory::createJoin($table, $selfColumn, $refColumn, $columns, Join::JOIN_INNER);
+        $this->join->setRefTable($this->table);
+        $this->join->setSelect($this->select);
 
         return $this;
     }
@@ -56,7 +82,7 @@ class GenericBuilder implements BuilderInterface
 
             $newValue = (is_numeric($value) ? $value : "'{$value}'");
             
-            $alias = (!empty($this->table->tableAlias) ? $this->table->tableAlias : $this->table->getName());
+            $alias = (!empty($this->table->getAlias()) ? $this->table->getAlias() : $this->table->getName());
             $sql .= "{$alias}.{$field} = {$newValue}";
             $i++;
         }
@@ -69,25 +95,41 @@ class GenericBuilder implements BuilderInterface
     public function orderBy($order)
     {
         $this->order = SyntaxFactory::createOrderBy($order);
-        $this->rawSql .= $this->order->getSql();
-
         return $this;
     }
 
     public function limit(int $limit)
     {
-        $this->rawSql .= sprintf(" LIMIT %s", $limit);
+        $this->limit = SyntaxFactory::createLimit($limit);
         return $this;
     }
 
     public function offset(int $offset)
     {
-        $this->rawSql .= sprintf(" OFFSET %s", $offset);
+        $this->offset = SyntaxFactory::createOffset($offset);
         return $this;
     }
 
     public function getSql()
     {
-        return $this->rawSql;
+        $sql = $this->select->getSql();
+
+        if ($this->join) {
+            $sql .=  ' ' . $this->join->getSql();
+        }
+
+        if ($this->order) {
+            $sql .= ' ' . $this->order->getSql();
+        }
+
+        if ($this->limit) {
+            $sql .= ' ' . $this->limit->getSql();
+        }
+
+        if ($this->offset) {
+            $sql .= ' ' . $this->offset->getSql();
+        }
+
+        return $sql;
     }
 }

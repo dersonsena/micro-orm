@@ -25,17 +25,26 @@ class Table
         return (string)$this->name;
     }
 
-    public function getName()
+    public function getName(): string
     {
         return $this->name;
     }
 
-    public function getAlias()
+    public function getAlias(): string
     {
         return $this->alias;
     }
 
-    public function getTableNameWithAlias()
+    public function getAliasOrName(): string
+    {
+        if (!empty($this->alias)) {
+            return $this->alias;
+        }
+
+        return $this->name;
+    }
+
+    public function getTableNameWithAlias(): string
     {
         $alias = (!empty($this->alias) && !is_null($this->alias) ? " AS {$this->alias}" : '');
         return $this->name . $alias;

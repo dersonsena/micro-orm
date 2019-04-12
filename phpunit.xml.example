@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="utf-8" ?>
-<phpunit bootstrap="./vendor/autoload.php">
-	<testsuites>
-		<testsuite name="ORM Tests Suites">
-			<directory>./tests/unit</directory>
-		</testsuite>
-	</testsuites>
-</phpunit>

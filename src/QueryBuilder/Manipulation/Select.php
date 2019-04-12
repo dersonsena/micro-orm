@@ -22,15 +22,28 @@ class Select
         $this->columns = $columns;
     }
 
+    public function addColumn($column, $alias = null)
+    {
+        if (is_null($alias)) {
+            $this->columns[] = $column;
+            return;
+        }
+
+        $this->columns[$alias] = $column;
+    }
+
     public function getSql(): string
     {
-        $stringColumns = '*';
+        $stringColumns = $this->table->getAliasOrName() . '.*';
 
         if (!empty($this->columns)) {
             $stringColumns = '';
 
             foreach ($this->columns as $alias => $column) {
-                $stringColumns .= (!is_numeric($alias) ? "{$column} AS {$alias}" : $column) . ', ';
+                $stringColumns .= (!is_numeric($alias)
+                    ? "{$this->table->getAliasOrName()}.{$column} AS {$alias}"
+                    : $this->table->getAliasOrName() . '.' . $column
+                ) . ', ';
             }
 
             $stringColumns = substr_replace($stringColumns, '', -2);

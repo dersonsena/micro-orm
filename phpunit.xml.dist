@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<phpunit bootstrap="./vendor/autoload.php" colors="true">
+	<php>
+		<ini name="intl.default_locale" value="pt_BR.UTF-8" />
+		<ini name="memory_limit" value="-1" />
+		<ini name="max_execution_time" value="-1"/>
+		<ini name="date.timezone" value="America/Fortaleza" />
+		<ini name="error_reporting" value="E_ALL" />
+	</php>
+
+	<testsuites>
+		<testsuite name="ORM Tests Suites">
+			<directory>./tests</directory>
+		</testsuite>
+	</testsuites>
+</phpunit>

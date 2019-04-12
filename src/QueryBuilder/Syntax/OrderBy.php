@@ -34,12 +34,12 @@ class OrderBy
 
     private function executeStringLogic()
     {
-        return ' ORDER BY ' . $this->order;
+        return 'ORDER BY ' . $this->order;
     }
 
     private function executeArrayLogic()
     {
-        $sql = ' ORDER BY ';
+        $sql = 'ORDER BY ';
         $i = 0;
 
         foreach ($this->order as $field => $direction) {
